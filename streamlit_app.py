@@ -16,7 +16,8 @@ mock_data = {
     'FRUIT_NAME': ['Apple', 'Blueberries', 'Jack Fruit', 'Raspberries', 'Strawberries'],
     'SEARCH_ON': ['Apple', 'Blueberry', 'Jackfruit', 'Raspberry', 'Strawberry']
 }
-pd_df = pd.DataFrame(mock_data)  # Replace this with actual Snowflake data fetching
+
+pd_df=my_dataframe.to_pandas()
 
 # User input for selecting fruits
 ingredients_list = st.multiselect(
