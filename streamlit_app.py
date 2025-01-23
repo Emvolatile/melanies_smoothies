@@ -40,8 +40,17 @@ if ingredients_list:
     for fruit_chosen in ingredients_list:
         ingredients_string += fruit_chosen + ' '
 
-        # Implementing the SEARCH_ON logic as shown
-        search_on = pd_df.loc[pd_df['FRUIT_NAME'] == fruit_chosen, 'SEARCH_ON'].iloc[0]
+       if 'SEARCH_ON' not in pd_df.columns:
+            st.write("Error: 'SEARCH_ON' column is missing.")
+            search_on = "Not Found"
+        else:
+            # Safely access the 'SEARCH_ON' column
+            try:
+                search_on = pd_df.loc[pd_df['FRUIT_NAME'] == fruit_chosen, 'SEARCH_ON'].iloc[0]
+            except IndexError:
+                # Handle case where no matching FRUIT_NAME is found
+                search_on = "Not Found"
+                
         st.write('The search value for ', fruit_chosen, ' is ', search_on, '.')
 
         st.subheader(fruit_chosen + ' Nutrition information')
