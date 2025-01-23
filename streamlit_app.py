@@ -1,51 +1,47 @@
-# Import Python packages
 import streamlit as st
 import requests
 from snowflake.snowpark.functions import col
 
-# Title and description for the app
-st.title(":cup_with_straw: Customize Your Smoothie :cup_with_straw:")
-st.write(
-    """
-    Choose the fruits you want in your custom Smoothie!
-    """
-)
+st.title('🍹 Customize Your Smoothie!')
+st.write("Choose the fruits you want in your custom Smoothie!")
 
 # User input for smoothie name
-name_on_order = st.text_input('Name on Smoothie:')
-st.write('The name on your Smoothie will be: ', name_on_order)
+name_on_order = st.text_input('Name your Smoothie:')
+st.write(f'The name on your Smoothie will be: {name_on_order}')
 
 # Get Snowflake session
 cnx = st.connection("snowflake")
 session = cnx.session()
-my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'))
-#st.dataframe(data=my_dataframe, use_container_width=True)
-#st.stop()
+my_dataframe = session.table("smoothies.public.fruit_options").select(col("FRUIT_NAME"))
+pd_df = my_dataframe.to_pandas()
+st.dataframe(pd_df)  # Debug: Display the DataFrame
 
-#Convert the Snowpark dataframe to a Pandas dataframe so we can use the LOC function
-pd_df=my_dataframe.to_pandas()
-#st.dataframe(pd_df)
-#st.stop()
-
-search_on = pd_df.loc[pd_df['FRUIT_NAME'] == fruit_chosen, 'SEARCH_ON'].iloc[0]
-
-# User input for ingredients
+# User selects fruits for ingredients
 ingredients_list = st.multiselect(
-    'Choose up to 5 ingredients:',
-    my_dataframe
-    ,max_selections=5
+    "Choose up to 5 ingredients:",
+    pd_df['FRUIT_NAME'],
+    max_selections=5
 )
 
 if ingredients_list:
-    ingredients_string = ''
-
     for fruit_chosen in ingredients_list:
-        ingredients_string += fruit_chosen + ' '
-
-        search_on=pd_df.loc[pd_df['FRUIT_NAME'] == fruit_chosen, 'SEARCH_ON'].iloc[0]
-        st.write('The search value for ', fruit_chosen,' is ', search_on, '.')
-
+        # Normalize text for matching
+        fruit_chosen = fruit_chosen.strip().lower()
+        pd_df['FRUIT_NAME'] = pd_df['FRUIT_NAME'].str.lower()
         
-        st.subheader(fruit_chosen + ' Nutriton information')
-        smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/" + fruit_chosen)
-        sf_df = st.dataframe(data=smoothiefroot_response.json(), use_container_width=True)
+        # Safely access SEARCH_ON column
+        if not pd_df.loc[pd_df['FRUIT_NAME'] == fruit_chosen, 'SEARCH_ON'].empty:
+            search_on = pd_df.loc[pd_df['FRUIT_NAME'] == fruit_chosen, 'SEARCH_ON'].iloc[0]
+        else:
+            search_on = "Not Found"
+            st.write(f"No matching fruit found for: {fruit_chosen}")
+
+        # Output fruit info
+        st.subheader(f"{fruit_chosen.capitalize()} Nutrition Information")
+        try:
+            smoothiefoot_response = requests.get(f"https://my.smoothiefroot.com/api/fruit/{fruit_chosen}")
+            smoothiefoot_response.raise_for_status()
+            sf_df = pd.DataFrame(smoothiefoot_response.json())
+            st.dataframe(sf_df)
+        except requests.exceptions.RequestException as e:
+            st.write(f"Error fetching data for {fruit_chosen}: {e}")
