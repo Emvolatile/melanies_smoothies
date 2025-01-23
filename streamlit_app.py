@@ -1,30 +1,31 @@
+# Import Python packages
 import streamlit as st
 import requests
 from snowflake.snowpark.functions import col
 
-# Streamlit title and description
-st.title('🍹 Customize Your Smoothie!')
-st.write("Choose the fruits you want in your custom Smoothie!")
+# Title and description for the app
+st.title(":cup_with_straw: Customize Your Smoothie :cup_with_straw:")
+st.write(
+    """
+    Choose the fruits you want in your custom Smoothie!
+    """
+)
 
 # User input for smoothie name
-name_on_order = st.text_input('Name your Smoothie:')
-if name_on_order:
-    st.write(f'The name on your Smoothie will be: {name_on_order}')
+name_on_order = st.text_input('Name on Smoothie:')
+st.write('The name on your Smoothie will be: ', name_on_order)
 
-# Get Snowflake session and data (mocked here for illustration)
-mock_data = {
-    'FRUIT_NAME': ['Apple', 'Blueberries', 'Jack Fruit', 'Raspberries', 'Strawberries'],
-    'SEARCH_ON': ['Apple', 'Blueberry', 'Jackfruit', 'Raspberry', 'Strawberry']
-}
+# Get Snowflake session
+cnx = st.connection("snowflake")
+session = cnx.session()
+my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'))
+#st.dataframe(data=my_dataframe, use_container_width=True)
+#st.stop()
 
+#Convert the Snowpark dataframe to a Pandas dataframe so we can use the LOC function
 pd_df=my_dataframe.to_pandas()
-
-# User input for selecting fruits
-ingredients_list = st.multiselect(
-    "Choose up to 5 ingredients:",
-    pd_df['FRUIT_NAME'],
-    max_selections=5
-)
+#st.dataframe(pd_df)
+#st.stop()
 
 # Process selected fruits
 if ingredients_list:
