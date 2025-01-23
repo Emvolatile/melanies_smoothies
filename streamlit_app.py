@@ -1,5 +1,6 @@
 # Import Python packages
 import streamlit as st
+import requests
 from snowflake.snowpark.functions import col
 
 # Title and description for the app
@@ -28,35 +29,10 @@ ingredients_list = st.multiselect(
 )
 
 if ingredients_list:
-    # Convert the selected ingredients into a string
-    ingredients_string = ', '.join(ingredients_list)
+    ingredients_string = ''
 
-
-    # st.write(ingredients_string)
-
-    my_insert_stmt = f"""
-    INSERT INTO smoothies.public.orders (ingredients, name_on_order)
-    VALUES ('{ingredients_string}', '{name_on_order}');
-    """
-
-    
-    #st.code(my_insert_stmt)
-    #st.stop()
-    
-    time_to_insert = st.button('Submit Order')
-
-    if time_to_insert:
-        try:
-            # Execute the query
-            session.sql(my_insert_stmt).collect()
-            st.success(f"Your Smoothie '{name_on_order}' with ingredients {ingredients_string} is ordered!", icon="✅")
-        except Exception as e:
-            st.error(f"An error occurred: {e}")
-
-#New section to display smoothiefroot nutrition information
-import requests
-smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/watermelon")
-#st.text(smoothiefroot_response.json())
-
-sf_df = st.dataframe(data=smoothiefroot_response.json(), use_container_width=True)
+    for fruit_chosen in ingredients_list:
+        ingredients_string += fruit_chosen + ' '
+        smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/watermelon")
+        sf_df = st.dataframe(data=smoothiefroot_response.json(), use_container_width=True)
 
