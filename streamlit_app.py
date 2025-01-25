@@ -1,6 +1,7 @@
 # Import Python packages
 import streamlit as st
 import requests
+import pandas as pd_df
 from snowflake.snowpark.functions import col
 
 # Title and description for the app
@@ -29,9 +30,9 @@ pd_df=my_dataframe.to_pandas()
 
 # User input for ingredients
 ingredients_list = st.multiselect(
-    'Choose up to 5 ingredients:',
-    my_dataframe
-    ,max_selections=5
+    'Choose up to 5 ingredients:'
+    , my_dataframe
+    , max_selections=5
 )
 
 if ingredients_list:
