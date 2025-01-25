@@ -39,17 +39,14 @@ if ingredients_list:
     ingredients_string = ''
     for fruit_chosen in ingredients_list:
         ingredients_string += fruit_chosen + ' '
-        try:
-            search_on = pd_df.loc[pd_df['FRUIT_NAME'] == fruit_chosen, 'SEARCH_ON'].iloc[0]
-            st.write('The search value for ', fruit_chosen,' is ', search_on, '.')
-            st.subheader(fruit_chosen + ' Nutrition Information')
-            smoothiefroot_response = requests.get("https://smoothiefroot.com/api/fruit/" + search_on)
-            #smoothiefroot_response.raise_for_status()  # Raise an exception for bad responses
-            sf_df = st.dataframe(data=smoothiefroot_response.json(), use_container_width=True)
-        except requests.RequestException as e:
-            st.error(f"Error fetching nutrition information for {fruit_chosen}: {e}")
-        except KeyError:
-            st.error(f"No search value found for {fruit_chosen}")
+
+        search_on = pd_df.loc[pd_df['FRUIT_NAME'] == fruit_chosen, 'SEARCH_ON'].iloc[0]
+        st.write('The search value for ', fruit_chosen,' is ', search_on, '.')
+        st.subheader(fruit_chosen + ' Nutrition Information')
+        smoothiefroot_response = requests.get("https://smoothiefroot.com/api/fruit/" + search_on)
+        #smoothiefroot_response.raise_for_status()  # Raise an exception for bad responses
+        sf_df = st.dataframe(data=smoothiefroot_response.json(), use_container_width=True)
+
 
 
 
