@@ -1,7 +1,7 @@
 # Import Python packages
 import streamlit as st
 import requests
-import pandas as pd_df
+import pandas as pd
 from snowflake.snowpark.functions import col
 
 # Title and description for the app
