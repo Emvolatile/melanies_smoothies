@@ -27,7 +27,7 @@ my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT
 pd_df=my_dataframe.to_pandas()
 st.dataframe(pd_df)
 st.write("DataFrame columns:", pd_df.columns)
-st.stop()
+#st.stop()
 
 # User input for ingredients
 ingredients_list = st.multiselect(
@@ -49,5 +49,5 @@ if ingredients_list:
         smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/" + fruit_chosen)
         #sf_df = st.dataframe(data=smoothiefroot_response.json(), use_container_width=True)
 
-# st.write(ingredients_string)
+st.write(ingredients_string)
 
