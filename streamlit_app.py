@@ -44,7 +44,7 @@ if ingredients_list:
             st.write('The search value for ', fruit_chosen,' is ', search_on, '.')
             st.subheader(fruit_chosen + ' Nutrition Information')
             smoothiefroot_response = requests.get("https://smoothiefroot.com/api/fruit/" + search_on)
-            smoothiefroot_response.raise_for_status()  # Raise an exception for bad responses
+            #smoothiefroot_response.raise_for_status()  # Raise an exception for bad responses
             sf_df = st.dataframe(data=smoothiefroot_response.json(), use_container_width=True)
         except requests.RequestException as e:
             st.error(f"Error fetching nutrition information for {fruit_chosen}: {e}")
