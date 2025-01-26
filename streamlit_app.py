@@ -50,10 +50,13 @@ if ingredients_list:
     
     time_to_insert = st.button('Submit Order')
 
-if time_to_insert:
-    try:
+time_to_insert = st.button('Submit Order')
+
+    if time_to_insert:
+        try:
             # Execute the query
             session.sql(my_insert_stmt).collect()
             st.success(f"Your Smoothie '{name_on_order}' with ingredients {ingredients_string} is ordered!", icon="✅")
-    except Exception as e:
+        except Exception as e:
             st.error(f"An error occurred: {e}")
+
